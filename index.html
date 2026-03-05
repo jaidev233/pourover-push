@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PourOver — Precision Brew</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f2eb;
+    --ink: #1c1109;
+    --brown: #4a2c17;
+    --amber: #c8731a;
+    --cream: #ede5d8;
+    --muted: #8a7060;
+    --card: #fff9f3;
+    --line: #d6c9b8;
+    --green: #3a6b45;
+    --red: #a33222;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 20px 32px;
+    position: relative;
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.8rem, 8vw, 5rem);
+    color: var(--brown);
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .logo em {
+    font-style: italic;
+    color: var(--amber);
+  }
+
+  .tagline {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  .divider-line {
+    width: 100%;
+    max-width: 560px;
+    height: 1px;
+    background: var(--line);
+    margin: 32px auto 0;
+  }
+
+  /* MAIN LAYOUT */
+  main {
+    max-width: 580px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 28px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .card-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* PARAM GRID */
+  .param-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .param-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .param-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  input[type="number"],
+  input[type="text"],
+  select {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 10px 12px;
+    width: 100%;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--amber);
+  }
+
+  input[readonly] {
+    color: var(--amber);
+    background: #fdf5e8;
+    border-color: #e8d5b0;
+    cursor: default;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  /* RATIO VISUAL */
+  .ratio-visual {
+    background: var(--cream);
+    border-radius: 2px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    font-family: 'DM Serif Display', serif;
+  }
+
+  .ratio-part {
+    text-align: center;
+  }
+
+  .ratio-num {
+    font-size: 2rem;
+    color: var(--brown);
+  }
+
+  .ratio-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .ratio-colon {
+    font-size: 1.5rem;
+    color: var(--amber);
+    margin: 0 10px;
+  }
+
+  /* GRIND GUIDE */
+  .grind-guide {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .grind-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--muted);
+    background: var(--bg);
+    letter-spacing: 1px;
+  }
+
+  .grind-chip:hover, .grind-chip.active {
+    background: var(--brown);
+    color: white;
+    border-color: var(--brown);
+  }
+
+  /* RECIPE CARD */
+  .recipe-banner {
+    background: var(--brown);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.8;
+  }
+
+  .recipe-banner strong {
+    color: #f0c87a;
+    font-size: 1rem;
+  }
+
+  /* POUR STEPS */
+  .pour-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .pour-step {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+
+  .pour-step.active {
+    background: #fff9ec;
+    border-color: var(--amber);
+    box-shadow: 0 0 0 2px rgba(200,115,26,0.12);
+  }
+
+  .pour-step.done {
+    opacity: 0.45;
+  }
+
+  .step-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--amber);
+    width: 28px;
+    flex-shrink: 0;
+    text-align: center;
+  }
+
+  .step-info {
+    flex: 1;
+  }
+
+  .step-name {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--brown);
+  }
+
+  .step-detail {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .step-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* BUTTONS */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+
+  .btn:active { transform: scale(0.98); }
+
+  .btn-primary {
+    background: var(--amber);
+    color: white;
+  }
+
+  .btn-primary:hover { background: #b5641a; }
+  .btn-primary:disabled { background: var(--line); color: var(--muted); cursor: not-allowed; }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--muted);
+  }
+
+  .btn-outline:hover { border-color: var(--brown); color: var(--brown); }
+
+  .btn-save {
+    background: var(--cream);
+    color: var(--brown);
+    border: 1px solid var(--line);
+  }
+
+  .btn-save:hover { background: var(--brown); color: white; }
+
+  /* TIMER SECTION */
+  #timer-section {
+    display: none;
+  }
+
+  #timer-section.visible { display: block; }
+
+  .timer-hero {
+    text-align: center;
+    padding: 20px 0 16px;
+  }
+
+  .timer-clock {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(4rem, 15vw, 6rem);
+    color: var(--brown);
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+
+  .timer-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  /* PROGRESS RING */
+  .progress-ring-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0 16px;
+    position: relative;
+  }
+
+  .ring-svg { transform: rotate(-90deg); }
+
+  .ring-bg { fill: none; stroke: var(--cream); stroke-width: 6; }
+  .ring-fill {
+    fill: none;
+    stroke: var(--amber);
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.9s linear;
+  }
+
+  .ring-inner-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .ring-pct {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    color: var(--brown);
+    line-height: 1;
+  }
+
+  .ring-lbl {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* CURRENT POUR HIGHLIGHT */
+  .current-pour-banner {
+    background: linear-gradient(135deg, #fff9ec, #fdf0d5);
+    border: 1.5px solid var(--amber);
+    border-radius: 2px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .cpb-icon { font-size: 1.6rem; }
+
+  .cpb-text {}
+  .cpb-action {
+    font-weight: 500;
+    color: var(--brown);
+    font-size: 1rem;
+  }
+  .cpb-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* NEXT POUR COUNTDOWN */
+  .next-pour-bar {
+    background: var(--cream);
+    border-radius: 2px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .next-pour-bar span:last-child {
+    color: var(--amber);
+    font-weight: 500;
+  }
+
+  /* BAR PROGRESS */
+  .bar-progress {
+    height: 4px;
+    background: var(--cream);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: var(--amber);
+    transition: width 0.9s linear;
+    border-radius: 2px;
+  }
+
+  /* HISTORY */
+  .history-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+  }
+
+  .hi-main { color: var(--brown); font-weight: 500; }
+  .hi-detail { color: var(--muted); margin-top: 2px; font-size: 0.65rem; }
+  .hi-date { color: var(--muted); font-size: 0.65rem; }
+
+  .empty-state {
+    text-align: center;
+    padding: 24px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .btn-text {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 8px 0 0;
+  }
+
+  .btn-text:hover { color: var(--red); }
+
+  /* COMPLETE BANNER */
+  .complete-banner {
+    background: var(--green);
+    color: white;
+    text-align: center;
+    padding: 18px;
+    border-radius: 2px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    display: none;
+  }
+
+  .complete-banner.visible { display: block; }
+
+  .complete-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 30px 20px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--cream); }
+  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Pour<em>Over</em></div>
+  <div class="tagline">Precision Brew Calculator</div>
+  <div class="divider-line"></div>
+</header>
+
+<main>
+
+  <!-- PARAMETERS CARD -->
+  <div class="card">
+    <div class="card-title">Parameters</div>
+
+    <!-- Ratio Visual -->
+    <div class="ratio-visual">
+      <div class="ratio-part">
+        <div class="ratio-num" id="rv-coffee">16g</div>
+        <div class="ratio-label">Coffee</div>
+      </div>
+      <div class="ratio-colon">:</div>
+      <div class="ratio-part">
+        <div class="ratio-num" id="rv-water">250g</div>
+        <div class="ratio-label">Water</div>
+      </div>
+      <div class="ratio-colon" style="opacity:0.3">→</div>
+      <div class="ratio-part">
+        <div class="ratio-num" id="rv-yield">~234ml</div>
+        <div class="ratio-label">In Cup</div>
+      </div>
+    </div>
+
+    <div class="param-grid">
+      <div class="param-group">
+        <label>Coffee (g)</label>
+        <input type="number" id="coffee" value="16" min="5" max="50" step="0.5">
+      </div>
+      <div class="param-group">
+        <label>Ratio (1:x)</label>
+        <input type="number" id="ratio" value="15.6" min="10" max="20" step="0.1">
+      </div>
+      <div class="param-group">
+        <label>Total Water (g)</label>
+        <input type="number" id="water" value="250" min="50" max="1000" step="5">
+      </div>
+      <div class="param-group">
+        <label>Brew Time (min)</label>
+        <input type="number" id="brewtime" value="3" min="1" max="8" step="0.5">
+      </div>
+      <div class="param-group">
+        <label>Number of Pours</label>
+        <input type="number" id="pours" value="4" min="2" max="8">
+      </div>
+      <div class="param-group">
+        <label>Bloom Water (g)</label>
+        <input type="number" id="bloom" value="32" min="10" max="80" step="1">
+      </div>
+    </div>
+
+    <div class="param-group" style="margin-bottom:14px">
+      <label>Grind Size</label>
+      <div class="grind-guide" id="grind-chips">
+        <div class="grind-chip" data-grind="Coarse">Coarse</div>
+        <div class="grind-chip active" data-grind="Medium-Coarse">Med-Coarse</div>
+        <div class="grind-chip" data-grind="Medium">Medium</div>
+        <div class="grind-chip" data-grind="Medium-Fine">Med-Fine</div>
+        <div class="grind-chip" data-grind="Fine">Fine</div>
+      </div>
+    </div>
+
+    <div id="grind-tip" class="recipe-banner" style="margin-bottom:0; font-size:0.78rem; line-height:1.6;">
+    </div>
+  </div>
+
+  <!-- RECIPE STEPS CARD -->
+  <div class="card">
+    <div class="card-title">Pour Schedule</div>
+    <div id="pour-steps" class="pour-steps"></div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="btn-row" style="margin-bottom:16px">
+    <button class="btn btn-primary" id="start-btn">▶ Start Brewing</button>
+    <button class="btn btn-save" id="save-btn">Save Recipe</button>
+  </div>
+
+  <!-- TIMER SECTION -->
+  <div id="timer-section">
+    <div class="card">
+      <div class="card-title">Brewing</div>
+
+      <!-- Complete banner -->
+      <div class="complete-banner" id="complete-banner">
+        ☕ Enjoy your coffee
+        <div class="complete-sub">Brew complete</div>
+      </div>
+
+      <!-- Current pour highlight -->
+      <div class="current-pour-banner" id="cpb">
+        <div class="cpb-icon" id="cpb-icon">⏳</div>
+        <div class="cpb-text">
+          <div class="cpb-action" id="cpb-action">Get ready…</div>
+          <div class="cpb-sub" id="cpb-sub">Prepare your kettle and dripper</div>
+        </div>
+      </div>
+
+      <!-- Next pour countdown -->
+      <div class="next-pour-bar" id="next-bar">
+        <span>Next pour in</span>
+        <span id="next-countdown">—</span>
+      </div>
+
+      <!-- Timer clock -->
+      <div class="timer-hero">
+        <div class="timer-clock" id="clock">00:00</div>
+        <div class="timer-status" id="timer-status">Ready</div>
+      </div>
+
+      <!-- Progress ring -->
+      <div class="progress-ring-wrap">
+        <svg class="ring-svg" width="120" height="120" viewBox="0 0 120 120">
+          <circle class="ring-bg" cx="60" cy="60" r="52"/>
+          <circle class="ring-fill" id="ring" cx="60" cy="60" r="52"
+            stroke-dasharray="326.7"
+            stroke-dashoffset="326.7"/>
+        </svg>
+        <div class="ring-inner-text">
+          <div class="ring-pct" id="ring-pct">0%</div>
+          <div class="ring-lbl">Progress</div>
+        </div>
+      </div>
+
+      <!-- Bar -->
+      <div class="bar-progress">
+        <div class="bar-fill" id="bar-fill" style="width:0%"></div>
+      </div>
+
+      <!-- Live step list -->
+      <div id="timer-steps" class="pour-steps"></div>
+
+      <div class="btn-row" style="margin-top:16px">
+        <button class="btn btn-outline" id="pause-btn">⏸ Pause</button>
+        <button class="btn btn-outline" id="reset-btn">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY CARD -->
+  <div class="card">
+    <div class="card-title">Brew History</div>
+    <ul class="history-list" id="history-list">
+      <li class="empty-state">No saved brews yet.</li>
+    </ul>
+    <button class="btn-text" id="clear-btn">Clear History</button>
+  </div>
+
+</main>
+
+<footer>
+  <p>PourOver &mdash; 2026</p>
+</footer>
+
+<script>
+// ── Elements ──────────────────────────────────────────────
+const coffeeIn = document.getElementById('coffee');
+const ratioIn  = document.getElementById('ratio');
+const waterIn  = document.getElementById('water');
+const btimeIn  = document.getElementById('brewtime');
+const poursIn  = document.getElementById('pours');
+const bloomIn  = document.getElementById('bloom');
+
+const rvCoffee = document.getElementById('rv-coffee');
+const rvWater  = document.getElementById('rv-water');
+const rvYield  = document.getElementById('rv-yield');
+
+const startBtn  = document.getElementById('start-btn');
+const saveBtn   = document.getElementById('save-btn');
+const pauseBtn  = document.getElementById('pause-btn');
+const resetBtn  = document.getElementById('reset-btn');
+const clearBtn  = document.getElementById('clear-btn');
+
+const timerSection = document.getElementById('timer-section');
+const completeBanner = document.getElementById('complete-banner');
+const cpb         = document.getElementById('cpb');
+const cpbIcon     = document.getElementById('cpb-icon');
+const cpbAction   = document.getElementById('cpb-action');
+const cpbSub      = document.getElementById('cpb-sub');
+const nextBar     = document.getElementById('next-bar');
+const nextCountdown = document.getElementById('next-countdown');
+const clockEl     = document.getElementById('clock');
+const timerStatus = document.getElementById('timer-status');
+const ringEl      = document.getElementById('ring');
+const ringPct     = document.getElementById('ring-pct');
+const barFill     = document.getElementById('bar-fill');
+
+const grindChips  = document.querySelectorAll('.grind-chip');
+const grindTipEl  = document.getElementById('grind-tip');
+const pourStepsEl = document.getElementById('pour-steps');
+const timerStepsEl = document.getElementById('timer-steps');
+const historyListEl = document.getElementById('history-list');
+
+// ── State ─────────────────────────────────────────────────
+let currentGrind = 'Medium-Coarse';
+let interval = null;
+let elapsed = 0;
+let paused = false;
+let schedule = [];
+let totalSec = 0;
+
+// ── Grind tips ────────────────────────────────────────────
+const grindData = {
+  'Coarse': {
+    icon: '⬤⬤⬤⬤⬤',
+    desc: 'Like coarse sea salt. Good for longer extractions (4+ min). Use if your brew runs fast or tastes sour.',
+    ratio: [15, 16],
+    time: [3.5, 5]
+  },
+  'Medium-Coarse': {
+    icon: '⬤⬤⬤⬤○',
+    desc: 'Like rough sand. Classic pour-over sweet spot. Balanced extraction, clean cup. Aim for 3–4 min brew.',
+    ratio: [15, 16],
+    time: [3, 4]
+  },
+  'Medium': {
+    icon: '⬤⬤⬤○○',
+    desc: 'Like fine sand. Works well with lighter roasts. Watch for over-extraction — keep brew time under 3:30.',
+    ratio: [14, 15.5],
+    time: [2.5, 3.5]
+  },
+  'Medium-Fine': {
+    icon: '⬤⬤○○○',
+    desc: 'Like table salt. Use for very light or bright coffees. Brew time 2:30–3:15. Easy to over-extract.',
+    ratio: [14, 15],
+    time: [2.5, 3.25]
+  },
+  'Fine': {
+    icon: '⬤○○○○',
+    desc: 'Like powdered sugar. Only for very light roasts or if you want strong intensity. 2–3 min brew.',
+    ratio: [13, 14.5],
+    time: [2, 3]
+  }
+};
+
+// ── Core calculation ──────────────────────────────────────
+
+// Which input was last changed (for auto-adjustment)
+let lastChanged = 'coffee';
+
+function calcFromCoffeeAndRatio() {
+  const c = parseFloat(coffeeIn.value) || 16;
+  const r = parseFloat(ratioIn.value) || 15.6;
+  waterIn.value = (c * r).toFixed(1);
+}
+
+function calcFromWaterAndRatio() {
+  const w = parseFloat(waterIn.value) || 250;
+  const r = parseFloat(ratioIn.value) || 15.6;
+  coffeeIn.value = (w / r).toFixed(1);
+}
+
+function updateRatioVisual() {
+  const c = parseFloat(coffeeIn.value) || 0;
+  const w = parseFloat(waterIn.value) || 0;
+  const yld = Math.round(w * 0.93 - 5); // approximate absorbed water
+  rvCoffee.textContent = c.toFixed(1) + 'g';
+  rvWater.textContent  = w.toFixed(1) + 'g';
+  rvYield.textContent  = '~' + Math.max(yld, 0) + 'ml';
+}
+
+function buildSchedule() {
+  const totalWater = parseFloat(waterIn.value) || 250;
+  const bloomW     = parseFloat(bloomIn.value) || 32;
+  const numPours   = parseInt(poursIn.value) || 4;
+  const brewMin    = parseFloat(btimeIn.value) || 3;
+  totalSec = Math.round(brewMin * 60);
+
+  const remainWater = totalWater - bloomW;
+  const pourW = remainWater / (numPours - 1); // bloom is pour #1
+
+  // Timing: bloom at 0s, drawdown starts at totalSec
+  // Spread remaining pours between bloomEnd and totalSec
+  const bloomDuration = Math.max(30, Math.round(totalSec * 0.18));
+  const remainSec = totalSec - bloomDuration;
+  const pourInterval = numPours > 2 ? Math.round(remainSec / (numPours - 1)) : remainSec;
+
+  schedule = [];
+
+  // Step 0: Bloom
+  schedule.push({
+    name: 'Bloom',
+    icon: '🫧',
+    water: bloomW,
+    cumulative: bloomW,
+    atSec: 0,
+    endSec: bloomDuration,
+    desc: `Saturate grounds. Pour in circles. Let CO₂ escape.`,
+    tip: `Wait ${bloomDuration}s before next pour.`
+  });
+
+  // Subsequent pours
+  for (let i = 1; i < numPours; i++) {
+    const atSec = bloomDuration + (i - 1) * pourInterval;
+    const cumW  = bloomW + pourW * i;
+    const isLast = i === numPours - 1;
+    schedule.push({
+      name: isLast ? 'Final Pour' : `Pour ${i + 1}`,
+      icon: isLast ? '🏁' : '💧',
+      water: pourW,
+      cumulative: cumW,
+      atSec: atSec,
+      endSec: isLast ? totalSec : atSec + pourInterval,
+      desc: isLast
+        ? `Pour to ${cumW.toFixed(0)}g. Allow drawdown.`
+        : `Pour to ${cumW.toFixed(0)}g total.`,
+      tip: isLast ? 'Wait for full drawdown.' : `Next pour at ${fmtTime(atSec + pourInterval)}.`
+    });
+  }
+
+  return schedule;
+}
+
+function fmtTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+function renderPourSteps(container, highlightIdx = -1) {
+  container.innerHTML = schedule.map((step, i) => {
+    let cls = 'pour-step';
+    if (i === highlightIdx) cls += ' active';
+    if (highlightIdx >= 0 && i < highlightIdx) cls += ' done';
+    return `
+      <div class="${cls}">
+        <div class="step-num">${step.icon}</div>
+        <div class="step-info">
+          <div class="step-name">${step.name} — ${step.water.toFixed(0)}g</div>
+          <div class="step-detail">${step.desc}</div>
+        </div>
+        <div class="step-time">@ ${fmtTime(step.atSec)}<br><span style="font-size:0.6rem;color:var(--line)">${step.tip}</span></div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderGrindTip() {
+  const d = grindData[currentGrind];
+  grindTipEl.innerHTML = `<strong>${currentGrind}</strong> &nbsp;${d.icon}<br>${d.desc}<br><small style="opacity:0.7;font-size:0.65rem;">Suggested ratio: 1:${d.ratio[0]}–${d.ratio[1]} &nbsp;|&nbsp; Brew time: ${d.time[0]}–${d.time[1]} min</small>`;
+}
+
+function refresh() {
+  updateRatioVisual();
+  buildSchedule();
+  renderPourSteps(pourStepsEl);
+  renderGrindTip();
+}
+
+// ── Input events ──────────────────────────────────────────
+
+coffeeIn.addEventListener('input', () => {
+  calcFromCoffeeAndRatio();
+  autoAdjustBloom();
+  refresh();
+});
+
+ratioIn.addEventListener('input', () => {
+  calcFromCoffeeAndRatio();
+  refresh();
+});
+
+waterIn.addEventListener('input', () => {
+  calcFromWaterAndRatio();
+  autoAdjustBloom();
+  refresh();
+});
+
+[btimeIn, poursIn, bloomIn].forEach(el => el.addEventListener('input', refresh));
+
+function autoAdjustBloom() {
+  const c = parseFloat(coffeeIn.value) || 16;
+  bloomIn.value = Math.round(c * 2);
+  refresh();
+}
+
+grindChips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    grindChips.forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    currentGrind = chip.dataset.grind;
+    // Auto-suggest ratio and time from grind
+    const d = grindData[currentGrind];
+    const midRatio = ((d.ratio[0] + d.ratio[1]) / 2).toFixed(1);
+    const midTime  = ((d.time[0] + d.time[1]) / 2).toFixed(1);
+    ratioIn.value = midRatio;
+    btimeIn.value = midTime;
+    calcFromCoffeeAndRatio();
+    refresh();
+  });
+});
+
+// ── Timer ─────────────────────────────────────────────────
+
+function currentStepIdx() {
+  let idx = 0;
+  for (let i = 0; i < schedule.length; i++) {
+    if (elapsed >= schedule[i].atSec) idx = i;
+    else break;
+  }
+  return idx;
+}
+
+function updateTimerUI() {
+  // Clock
+  clockEl.textContent = fmtTime(elapsed);
+
+  // Progress
+  const pct = Math.min(elapsed / totalSec, 1);
+  const circumference = 326.7;
+  ringEl.style.strokeDashoffset = circumference * (1 - pct);
+  ringPct.textContent = Math.round(pct * 100) + '%';
+  barFill.style.width = (pct * 100) + '%';
+
+  if (elapsed >= totalSec) {
+    finishBrew();
+    return;
+  }
+
+  // Current step
+  const idx = currentStepIdx();
+  const step = schedule[idx];
+  const nextStep = schedule[idx + 1];
+
+  // Check if it's exactly time for a pour
+  const isPourMoment = schedule.some(s => s.atSec === elapsed);
+
+  cpbIcon.textContent = step.icon;
+  if (isPourMoment || elapsed === 0) {
+    cpbAction.textContent = `${step.name} — pour ${step.water.toFixed(0)}g`;
+    cpbSub.textContent = `Target: ${step.cumulative.toFixed(0)}g total · ${step.desc}`;
+  } else {
+    cpbAction.textContent = `${step.name} in progress…`;
+    cpbSub.textContent = step.tip;
+  }
+
+  if (nextStep) {
+    const secsToNext = nextStep.atSec - elapsed;
+    nextCountdown.textContent = secsToNext + 's';
+    nextBar.style.display = 'flex';
+  } else {
+    nextBar.style.display = 'none';
+  }
+
+  timerStatus.textContent = paused ? 'PAUSED' : 'BREWING';
+
+  // Render steps with highlight
+  renderPourSteps(timerStepsEl, idx);
+}
+
+function finishBrew() {
+  clearInterval(interval);
+  interval = null;
+  completeBanner.classList.add('visible');
+  cpb.style.display = 'none';
+  nextBar.style.display = 'none';
+  timerStatus.textContent = 'COMPLETE';
+  startBtn.disabled = false;
+  ringEl.style.strokeDashoffset = 0;
+  ringPct.textContent = '100%';
+  barFill.style.width = '100%';
+  renderPourSteps(timerStepsEl, schedule.length); // all done
+}
+
+function startBrew() {
+  buildSchedule();
+  elapsed = 0;
+  paused = false;
+  completeBanner.classList.remove('visible');
+  cpb.style.display = 'flex';
+  timerSection.classList.add('visible');
+  startBtn.disabled = true;
+  pauseBtn.textContent = '⏸ Pause';
+
+  renderPourSteps(timerStepsEl, 0);
+  updateTimerUI();
+
+  interval = setInterval(() => {
+    if (!paused) {
+      elapsed++;
+      updateTimerUI();
+    }
+  }, 1000);
+
+  // Scroll to timer
+  timerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+pauseBtn.addEventListener('click', () => {
+  paused = !paused;
+  pauseBtn.textContent = paused ? '▶ Resume' : '⏸ Pause';
+  timerStatus.textContent = paused ? 'PAUSED' : 'BREWING';
+});
+
+resetBtn.addEventListener('click', () => {
+  clearInterval(interval);
+  interval = null;
+  elapsed = 0;
+  paused = false;
+  timerSection.classList.remove('visible');
+  completeBanner.classList.remove('visible');
+  cpb.style.display = 'flex';
+  startBtn.disabled = false;
+  clockEl.textContent = '00:00';
+  ringEl.style.strokeDashoffset = 326.7;
+  ringPct.textContent = '0%';
+  barFill.style.width = '0%';
+  timerStepsEl.innerHTML = '';
+});
+
+startBtn.addEventListener('click', startBrew);
+
+// ── History ───────────────────────────────────────────────
+
+function saveRecipe() {
+  const entry = {
+    id: Date.now(),
+    coffee: coffeeIn.value,
+    water: waterIn.value,
+    ratio: ratioIn.value,
+    grind: currentGrind,
+    time: btimeIn.value,
+    pours: poursIn.value,
+    date: new Date().toLocaleDateString()
+  };
+  const h = JSON.parse(localStorage.getItem('pourover_history') || '[]');
+  h.unshift(entry);
+  localStorage.setItem('pourover_history', JSON.stringify(h.slice(0, 15)));
+  renderHistory();
+
+  const t = saveBtn.textContent;
+  saveBtn.textContent = '✓ Saved!';
+  setTimeout(() => saveBtn.textContent = t, 2000);
+}
+
+function renderHistory() {
+  const h = JSON.parse(localStorage.getItem('pourover_history') || '[]');
+  if (!h.length) {
+    historyListEl.innerHTML = '<li class="empty-state">No saved brews yet.</li>';
+    return;
+  }
+  historyListEl.innerHTML = h.map(e => `
+    <li class="history-item" onclick="loadRecipe(${e.id})" style="cursor:pointer" title="Click to load">
+      <div>
+        <div class="hi-main">${e.coffee}g coffee / ${e.water}g water (1:${e.ratio})</div>
+        <div class="hi-detail">Grind: ${e.grind} · ${e.pours} pours · ${e.time} min</div>
+      </div>
+      <div class="hi-date">${e.date}</div>
+    </li>
+  `).join('');
+}
+
+function loadRecipe(id) {
+  const h = JSON.parse(localStorage.getItem('pourover_history') || '[]');
+  const e = h.find(x => x.id === id);
+  if (!e) return;
+  coffeeIn.value = e.coffee;
+  ratioIn.value  = e.ratio;
+  waterIn.value  = e.water;
+  btimeIn.value  = e.time;
+  poursIn.value  = e.pours;
+  currentGrind   = e.grind;
+  grindChips.forEach(c => {
+    c.classList.toggle('active', c.dataset.grind === e.grind);
+  });
+  autoAdjustBloom();
+  refresh();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.loadRecipe = loadRecipe;
+
+saveBtn.addEventListener('click', saveRecipe);
+
+clearBtn.addEventListener('click', () => {
+  if (confirm('Clear all brew history?')) {
+    localStorage.removeItem('pourover_history');
+    renderHistory();
+  }
+});
+
+// ── Init ──────────────────────────────────────────────────
+autoAdjustBloom();
+refresh();
+renderHistory();
+</script>
+</body>
+</html>
