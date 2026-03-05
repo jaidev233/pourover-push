@@ -2,6 +2,9 @@
 
 **PourOver** is a minimalist, high-precision brew calculator and timer designed for coffee enthusiasts. It translates your preferred coffee-to-water ratio into a structured, step-by-step pouring schedule, complete with an interactive timer to ensure consistency in every cup.
 
+**you can clone and use it on you system and tweak as you like it ***
+flowrate feature comming soon .......
+
 ## ✨ Features
 
 - **Dynamic Ratio Calculator**: Adjust coffee mass, water volume, or ratio, and the app automatically balances the remaining variables.
@@ -28,3 +31,4 @@
 
 ---
 *Precision is the secret ingredient to the perfect cup.*
+
