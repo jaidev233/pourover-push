@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Filter Coffee — Precision Brew</title>
+<title>South Indian Filter — Precision Brew</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -577,8 +577,8 @@
   
 <button id="sound-toggle" style="position: absolute; top: 20px; right: 20px; background: transparent; border: 1px solid var(--line); border-radius: 4px; padding: 6px 10px; font-size: 1.2rem; cursor: pointer; color: var(--muted);">🔊</button>
 
-  <div class="logo">Filter<em>Brew</em></div>
-  <div class="tagline">Precision Brew Calculator</div>
+  <div class="logo">SI<em>Filter</em></div>
+  <div class="tagline">South Indian Filter Calculator</div>
   <div class="divider-line"></div>
 </header>
 
@@ -601,12 +601,12 @@
     <!-- Ratio Visual -->
     <div class="ratio-visual">
       <div class="ratio-part">
-        <div class="ratio-num" id="rv-coffee">16g</div>
+        <div class="ratio-num" id="rv-coffee">20g</div>
         <div class="ratio-label">Coffee</div>
       </div>
       <div class="ratio-colon">:</div>
       <div class="ratio-part">
-        <div class="ratio-num" id="rv-water">250g</div>
+        <div class="ratio-num" id="rv-water">100g</div>
         <div class="ratio-label">Water</div>
       </div>
       <div class="ratio-colon" style="opacity:0.3">→</div>
@@ -619,27 +619,27 @@
     <div class="param-grid">
       <div class="param-group">
         <label>Coffee (g)</label>
-        <input type="number" id="coffee" value="60" min="5" max="50" step="0.5">
+        <input type="number" id="coffee" value="20" min="5" max="50" step="0.5">
       </div>
       <div class="param-group">
         <label>Ratio (1:x)</label>
-        <input type="number" id="ratio" value="16.6" min="10" max="20" step="0.1">
+        <input type="number" id="ratio" value="5.0" min="10" max="20" step="0.1">
       </div>
       <div class="param-group">
         <label>Total Water (g)</label>
-        <input type="number" id="water" value="250" min="50" max="1000" step="5">
+        <input type="number" id="water" value="100" min="50" max="1000" step="5">
       </div>
       <div class="param-group">
         <label>Brew Time (min)</label>
-        <input type="number" id="brewtime" value="5" min="1" max="8" step="0.5">
+        <input type="number" id="brewtime" value="10" min="1" max="8" step="0.5">
       </div>
       <div class="param-group">
         <label>Number of Pours</label>
-        <input type="number" id="pours" value="1" min="2" max="8">
+        <input type="number" id="pours" value="2" min="1" max="4">
       </div>
       <div class="param-group">
         <label>Bloom Water (g)</label>
-        <input type="number" id="bloom" value="32" min="10" max="80" step="1">
+        <input type="number" id="bloom" value="30" min="10" max="80" step="1">
       </div>
     </div>
 
@@ -647,15 +647,23 @@
       <label>Grind Size</label>
       <div class="grind-guide" id="grind-chips">
         <div class="grind-chip" data-grind="Coarse">Coarse</div>
-        <div class="grind-chip active" data-grind="Medium-Coarse">Med-Coarse</div>
+        <div class="grind-chip" data-grind="Medium-Coarse">Med-Coarse</div>
         <div class="grind-chip" data-grind="Medium">Medium</div>
-        <div class="grind-chip" data-grind="Medium-Fine">Med-Fine</div>
+        <div class="grind-chip active" data-grind="Medium-Fine">Med-Fine</div>
         <div class="grind-chip" data-grind="Fine">Fine</div>
       </div>
     </div>
 
     <div id="grind-tip" class="recipe-banner" style="margin-bottom:0; font-size:0.78rem; line-height:1.6;">
     </div>
+  </div>
+
+  
+  <!-- RECIPE INSTRUCTIONS CARD -->
+  <div class="card">
+    <div class="card-title">Traditional Recipe</div>
+    <ul id="recipe-instructions" style="font-size: 0.85rem; line-height: 1.6; color: var(--ink); padding-left: 20px; font-family: 'DM Sans', sans-serif;">
+    </ul>
   </div>
 
   <!-- RECIPE STEPS CARD -->
@@ -786,7 +794,7 @@ const timerStepsEl = document.getElementById('timer-steps');
 const historyListEl = document.getElementById('history-list');
 
 // ── State ─────────────────────────────────────────────────
-let currentGrind = 'Medium';
+let currentGrind = 'Medium-Fine';
 let interval = null;
 let elapsed = 0;
 let paused = false;
@@ -797,33 +805,33 @@ let totalSec = 0;
 const grindData = {
   'Coarse': {
     icon: '⬤⬤⬤⬤⬤',
-    desc: 'Like coarse sea salt. Good for longer extractions (4+ min). Use if your brew runs fast or tastes sour.',
-    ratio: [15, 16],
-    time: [3.5, 5]
+    desc: 'Too coarse for traditional filter. Water will run through too fast, resulting in a weak decoction.',
+    ratio: [5, 6],
+    time: [10, 15]
   },
   'Medium-Coarse': {
     icon: '⬤⬤⬤⬤○',
-    desc: 'Like rough sand. Classic pour-over sweet spot. Balanced extraction, clean cup. Aim for 3–4 min brew.',
-    ratio: [15, 16],
-    time: [3, 4]
+    desc: 'Slightly coarse. Might need a stronger tamp or more coffee to achieve a thick decoction.',
+    ratio: [4.5, 5.5],
+    time: [10, 15]
   },
   'Medium': {
     icon: '⬤⬤⬤○○',
-    desc: 'Like fine sand. Works well with lighter roasts. Watch for over-extraction — keep brew time under 3:30.',
-    ratio: [14, 15.5],
-    time: [2.5, 3.5]
+    desc: 'Standard for many pre-ground blends. Good balance, typical drip time ~10 mins.',
+    ratio: [4, 5.5],
+    time: [8, 12]
   },
   'Medium-Fine': {
     icon: '⬤⬤○○○',
-    desc: 'Like table salt. Use for very light or bright coffees. Brew time 2:30–3:15. Easy to over-extract.',
-    ratio: [14, 15],
-    time: [2.5, 3.25]
+    desc: 'Ideal for South Indian Filter. Slow, rich extraction yielding a thick, strong decoction.',
+    ratio: [4, 5],
+    time: [10, 15]
   },
   'Fine': {
     icon: '⬤○○○○',
-    desc: 'Like powdered sugar. Only for very light roasts or if you want strong intensity. 2–3 min brew.',
-    ratio: [13, 14.5],
-    time: [2, 3]
+    desc: 'Very fine. Will produce an intense, syrupy decoction but might clog the filter pores.',
+    ratio: [3.5, 4.5],
+    time: [12, 20]
   }
 };
 
@@ -833,13 +841,13 @@ const grindData = {
 let lastChanged = 'coffee';
 
 function calcFromCoffeeAndRatio() {
-  const c = parseFloat(coffeeIn.value) || 16;
-  const r = parseFloat(ratioIn.value) || 15.6;
+  const c = parseFloat(coffeeIn.value) || 20;
+  const r = parseFloat(ratioIn.value) || 5.0;
   waterIn.value = (c * r).toFixed(1);
 }
 
 function calcFromWaterAndRatio() {
-  const w = parseFloat(waterIn.value) || 250;
+  const w = parseFloat(waterIn.value) || 100;
   const r = parseFloat(ratioIn.value) || 15.6;
   coffeeIn.value = (w / r).toFixed(1);
 }
@@ -854,39 +862,39 @@ function updateRatioVisual() {
 }
 
 function buildSchedule() {
-  const totalWater = parseFloat(waterIn.value) || 250;
-  const bloomW     = parseFloat(bloomIn.value) || 32;
-  const numPours   = parseInt(poursIn.value) || 4;
-  const brewMin    = parseFloat(btimeIn.value) || 3;
+  const totalWater = parseFloat(waterIn.value) || 100;
+  const bloomW = parseFloat(bloomIn.value) || 30;
+  const numPours = parseInt(poursIn.value) || 2;
+  const brewMin = parseFloat(btimeIn.value) || 10;
   totalSec = Math.round(brewMin * 60);
 
   const remainWater = totalWater - bloomW;
   const pourW = remainWater / (numPours - 1); // bloom is pour #1
 
-  // Timing: bloom at 0s, drawdown starts at totalSec
-  // Spread remaining pours between bloomEnd and totalSec
-  const bloomDuration = Math.max(30, Math.round(totalSec * 0.18));
+  const bloomDuration = bloomW > 0 ? 30 : 0;
   const remainSec = totalSec - bloomDuration;
   const pourInterval = numPours > 2 ? Math.round(remainSec / (numPours - 1)) : remainSec;
 
   schedule = [];
 
   // Step 0: Bloom
-  schedule.push({
-    name: 'Bloom',
-    icon: '🫧',
-    water: bloomW,
-    cumulative: bloomW,
-    atSec: 0,
-    endSec: bloomDuration,
-    desc: `Saturate grounds. Pour in circles. Let CO₂ escape.`,
-    tip: `Wait ${bloomDuration}s before next pour.`
-  });
+  if (bloomW > 0) {
+    schedule.push({
+      name: 'Bloom (Swell)',
+      icon: '🫧',
+      water: bloomW,
+      cumulative: bloomW,
+      atSec: 0,
+      endSec: bloomDuration,
+      desc: `Pour boiling water over the umbrella.`,
+      tip: `Wait ${bloomDuration}s for the coffee to swell.`
+    });
+  }
 
   // Subsequent pours
-  for (let i = 1; i < numPours; i++) {
-    const atSec = bloomDuration + (i - 1) * pourInterval;
-    const cumW  = bloomW + pourW * i;
+  for (let i = (bloomW > 0 ? 1 : 0); i < numPours; i++) {
+    const atSec = bloomW > 0 ? bloomDuration + (i - 1) * pourInterval : i * pourInterval;
+    const cumW  = bloomW > 0 ? bloomW + pourW * i : pourW * (i + 1);
     const isLast = i === numPours - 1;
     schedule.push({
       name: isLast ? 'Final Pour' : `Pour ${i + 1}`,
@@ -896,9 +904,9 @@ function buildSchedule() {
       atSec: atSec,
       endSec: isLast ? totalSec : atSec + pourInterval,
       desc: isLast
-        ? `Pour to ${cumW.toFixed(0)}g. Allow drawdown.`
+        ? `Pour to ${cumW.toFixed(0)}g. Close lid and wait for drip.`
         : `Pour to ${cumW.toFixed(0)}g total.`,
-      tip: isLast ? 'Wait for full drawdown.' : `Next pour at ${fmtTime(atSec + pourInterval)}.`
+      tip: isLast ? 'Let it drip into the lower chamber.' : `Next pour at ${fmtTime(atSec + pourInterval)}.`
     });
   }
 
@@ -934,11 +942,41 @@ function renderGrindTip() {
   grindTipEl.innerHTML = `<strong>${currentGrind}</strong> &nbsp;${d.icon}<br>${d.desc}<br><small style="opacity:0.7;font-size:0.65rem;">Suggested ratio: 1:${d.ratio[0]}–${d.ratio[1]} &nbsp;|&nbsp; Brew time: ${d.time[0]}–${d.time[1]} min</small>`;
 }
 
+function renderRecipeInstructions() {
+  const c = parseFloat(coffeeIn.value) || 20;
+  const w = parseFloat(waterIn.value) || 100;
+  const b = parseFloat(bloomIn.value) || 30;
+  const rW = w - b;
+  const bT = parseFloat(btimeIn.value) || 10;
+  
+  const el = document.getElementById('recipe-instructions');
+  if (!el) return;
+  
+  let html = `
+    <li style="margin-bottom: 8px;"><strong>Prep:</strong> Add ${c}g of ${currentGrind} coffee powder into the upper chamber of the filter.</li>
+    <li style="margin-bottom: 8px;"><strong>Tamp:</strong> Level the grounds and press lightly with the plunger (umbrella). Leave it in place.</li>
+  `;
+  
+  if (b > 0) {
+    html += `<li style="margin-bottom: 8px;"><strong>Bloom:</strong> Pour ${b}g of boiling water over the umbrella. Wait 30 seconds to let the coffee swell (high body).</li>`;
+    html += `<li style="margin-bottom: 8px;"><strong>Pour:</strong> Add the remaining ${rW.toFixed(0)}g of boiling water. Close the lid.</li>`;
+  } else {
+    html += `<li style="margin-bottom: 8px;"><strong>Pour:</strong> Pour ${w}g of boiling water over the umbrella. Close the lid.</li>`;
+  }
+  
+  html += `
+    <li style="margin-bottom: 8px;"><strong>Drip:</strong> Let it steep and drip into the lower chamber for about ${bT} minutes.</li>
+    <li style="margin-bottom: 8px;"><strong>Serve:</strong> Pour the thick decoction into a tumbler and mix with hot, frothy milk and sugar to taste.</li>
+  `;
+  el.innerHTML = html;
+}
+
 function refresh() {
   updateRatioVisual();
   buildSchedule();
   renderPourSteps(pourStepsEl);
   renderGrindTip();
+  renderRecipeInstructions();
 }
 
 // ── Input events ──────────────────────────────────────────
@@ -963,8 +1001,8 @@ waterIn.addEventListener('input', () => {
 [btimeIn, poursIn, bloomIn].forEach(el => el.addEventListener('input', refresh));
 
 function autoAdjustBloom() {
-  const c = parseFloat(coffeeIn.value) || 16;
-  bloomIn.value = Math.round(c * 2);
+  const c = parseFloat(coffeeIn.value) || 20;
+  bloomIn.value = Math.round(c * 1.5);
   refresh();
 }
 
