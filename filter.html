@@ -1018,6 +1018,13 @@ function updateTimerUI() {
 
   // Check if it's exactly time for a pour
   const isPourMoment = schedule.some(s => s.atSec === elapsed);
+  
+  // Check if it's exactly time to stop pouring and let drip (switch moment)
+  const isStopPourMoment = schedule.some(s => (s.atSec + Math.min((s.endSec - s.atSec) || 5, 10)) === elapsed);
+
+  if (isStopPourMoment && window.isSoundEnabled && window.playSwitchSound) {
+    window.playSwitchSound();
+  }
 
   cpbIcon.textContent = step.icon;
   if (isPourMoment || elapsed === 0) {
@@ -1198,9 +1205,11 @@ renderHistory();
 </script>
 
 <script>
-// Web Audio API Pouring Sound
+// Web Audio API Pouring & Switch Sounds
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 let audioCtx;
+let pourBuffer = null;
+let switchBuffer = null;
 
 function initAudio() {
   if (!audioCtx) {
@@ -1209,46 +1218,59 @@ function initAudio() {
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();
   }
+  
+  if (!pourBuffer) {
+    fetch('sounds/pour-drip-coffee-33785.mp3')
+      .then(r => r.arrayBuffer())
+      .then(b => audioCtx.decodeAudioData(b))
+      .then(b => pourBuffer = b)
+      .catch(e => console.error('Error loading pour sound:', e));
+  }
+  
+  if (!switchBuffer) {
+    fetch('sounds/switch_sound.mp3')
+      .then(r => r.arrayBuffer())
+      .then(b => audioCtx.decodeAudioData(b))
+      .then(b => switchBuffer = b)
+      .catch(e => console.error('Error loading switch sound:', e));
+  }
 }
 
 window.playPouringSound = function(durationSecs) {
   initAudio();
-  if (!audioCtx) return;
+  if (!audioCtx || !pourBuffer) return;
   
-  const bufferSize = audioCtx.sampleRate * durationSecs;
-  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const data = buffer.getChannelData(0);
-  
-  let lastOut = 0;
-  for (let i = 0; i < bufferSize; i++) {
-    const white = Math.random() * 2 - 1;
-    data[i] = (lastOut + (0.02 * white)) / 1.02;
-    lastOut = data[i];
-    data[i] *= 3.5;
-  }
-  
-  const noiseSource = audioCtx.createBufferSource();
-  noiseSource.buffer = buffer;
-  
-  const filter = audioCtx.createBiquadFilter();
-  filter.type = 'bandpass';
-  filter.frequency.value = 400;
-  filter.Q.value = 1.0;
-  
-  // Modulate frequency to simulate filling
-  filter.frequency.linearRampToValueAtTime(1200, audioCtx.currentTime + durationSecs);
+  const source = audioCtx.createBufferSource();
+  source.buffer = pourBuffer;
+  source.loop = true;
   
   const gainNode = audioCtx.createGain();
   gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-  gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.2);
-  gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime + durationSecs - 0.2);
-  gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + durationSecs);
+  gainNode.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 0.2);
   
-  noiseSource.connect(filter);
-  filter.connect(gainNode);
+  const stopTime = audioCtx.currentTime + durationSecs;
+  gainNode.gain.setValueAtTime(1, Math.max(audioCtx.currentTime, stopTime - 0.5));
+  gainNode.gain.linearRampToValueAtTime(0, stopTime);
+  
+  source.connect(gainNode);
   gainNode.connect(audioCtx.destination);
+  source.start();
+  source.stop(stopTime);
+};
+
+window.playSwitchSound = function() {
+  initAudio();
+  if (!audioCtx || !switchBuffer) return;
   
-  noiseSource.start();
+  const source = audioCtx.createBufferSource();
+  source.buffer = switchBuffer;
+  
+  const gainNode = audioCtx.createGain();
+  gainNode.gain.value = 1;
+  
+  source.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+  source.start();
 };
 </script>
 
