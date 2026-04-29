@@ -574,6 +574,9 @@
 <body>
 
 <header>
+  
+<button id="sound-toggle" style="position: absolute; top: 20px; right: 20px; background: transparent; border: 1px solid var(--line); border-radius: 4px; padding: 6px 10px; font-size: 1.2rem; cursor: pointer; color: var(--muted);">🔊</button>
+
   <div class="logo">Chemex<em>Brew</em></div>
   <div class="tagline">Precision Brew Calculator</div>
   <div class="divider-line"></div>
@@ -1018,6 +1021,11 @@ function updateTimerUI() {
 
   cpbIcon.textContent = step.icon;
   if (isPourMoment || elapsed === 0) {
+    if (elapsed === 0 && typeof initAudio === 'function') initAudio();
+    const duration = step.endSec - step.atSec || 5;
+    if (window.playPouringSound && step.water > 0 && window.isSoundEnabled) {
+      window.playPouringSound(Math.min(duration, 10));
+    }
     cpbAction.textContent = `${step.name} — pour ${step.water.toFixed(0)}g`;
     cpbSub.textContent = `Target: ${step.cumulative.toFixed(0)}g total · ${step.desc}`;
   } else {
@@ -1242,6 +1250,21 @@ window.playPouringSound = function(durationSecs) {
   
   noiseSource.start();
 };
+</script>
+
+
+<script>
+  window.isSoundEnabled = true;
+  document.addEventListener('DOMContentLoaded', () => {
+    const soundToggleBtn = document.getElementById('sound-toggle');
+    if (soundToggleBtn) {
+      soundToggleBtn.addEventListener('click', () => {
+        window.isSoundEnabled = !window.isSoundEnabled;
+        soundToggleBtn.textContent = window.isSoundEnabled ? '🔊' : '🔇';
+        if (window.isSoundEnabled && window.initAudio) window.initAudio();
+      });
+    }
+  });
 </script>
 
 </body>
