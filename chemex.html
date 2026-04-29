@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PourOver — Precision Brew</title>
+<title>Chemex — Precision Brew</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -574,7 +574,7 @@
 <body>
 
 <header>
-  <div class="logo">Pour<em>Over</em></div>
+  <div class="logo">Chemex<em>Brew</em></div>
   <div class="tagline">Precision Brew Calculator</div>
   <div class="divider-line"></div>
 </header>
@@ -582,10 +582,10 @@
 <main>
 
 <nav style="text-align:center; margin-bottom: 20px; font-family: 'DM Mono', monospace; font-size: 0.7rem; text-transform: uppercase;">
-  <a href="index.html" style="color: var(--brown); font-weight: bold; text-decoration: underline; margin: 0 10px;">Pour Over</a>
+  <a href="index.html" style="color: var(--amber); text-decoration: none; margin: 0 10px;">Pour Over</a>
   <a href="filter.html" style="color: var(--amber); text-decoration: none; margin: 0 10px;">Filter</a>
   <a href="moka.html" style="color: var(--amber); text-decoration: none; margin: 0 10px;">Moka Pot</a>
-  <a href="chemex.html" style="color: var(--amber); text-decoration: none; margin: 0 10px;">Chemex</a>
+  <a href="chemex.html" style="color: var(--brown); font-weight: bold; text-decoration: underline; margin: 0 10px;">Chemex</a>
   <a href="aeropress.html" style="color: var(--amber); text-decoration: none; margin: 0 10px;">AeroPress</a>
   <a href="french-press.html" style="color: var(--amber); text-decoration: none; margin: 0 10px;">French Press</a>
 </nav>
@@ -616,11 +616,11 @@
     <div class="param-grid">
       <div class="param-group">
         <label>Coffee (g)</label>
-        <input type="number" id="coffee" value="16" min="5" max="50" step="0.5">
+        <input type="number" id="coffee" value="30" min="5" max="50" step="0.5">
       </div>
       <div class="param-group">
         <label>Ratio (1:x)</label>
-        <input type="number" id="ratio" value="15.6" min="10" max="20" step="0.1">
+        <input type="number" id="ratio" value="16" min="10" max="20" step="0.1">
       </div>
       <div class="param-group">
         <label>Total Water (g)</label>
@@ -628,11 +628,11 @@
       </div>
       <div class="param-group">
         <label>Brew Time (min)</label>
-        <input type="number" id="brewtime" value="3" min="1" max="8" step="0.5">
+        <input type="number" id="brewtime" value="4.5" min="1" max="8" step="0.5">
       </div>
       <div class="param-group">
         <label>Number of Pours</label>
-        <input type="number" id="pours" value="4" min="2" max="8">
+        <input type="number" id="pours" value="3" min="2" max="8">
       </div>
       <div class="param-group">
         <label>Bloom Water (g)</label>
@@ -783,7 +783,7 @@ const timerStepsEl = document.getElementById('timer-steps');
 const historyListEl = document.getElementById('history-list');
 
 // ── State ─────────────────────────────────────────────────
-let currentGrind = 'Medium-Coarse';
+let currentGrind = 'Coarse';
 let interval = null;
 let elapsed = 0;
 let paused = false;
