@@ -1,0 +1,143 @@
+/* ─────────────────────────────────────────────
+   RESPONSIVE FIXES — drop these rules into the
+   <style> block of every page (or link as a
+   shared stylesheet).  They override / extend
+   the existing rules; nothing else needs to change.
+───────────────────────────────────────────── */
+
+/* ── Nav: scrollable pill row on mobile ── */
+nav {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  white-space: nowrap;
+  padding-bottom: 6px;
+  scrollbar-width: none;          /* Firefox */
+}
+nav::-webkit-scrollbar { display: none; }
+
+nav a {
+  display: inline-block;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  margin: 0 4px !important;
+  font-size: 0.65rem !important;
+  white-space: nowrap;
+}
+
+nav a[style*="font-weight: bold"],
+nav a[style*="font-weight:bold"] {
+  background: var(--brown);
+  color: white !important;
+  border-color: var(--brown);
+}
+
+/* ── Ratio visual: stack on tiny screens ── */
+@media (max-width: 420px) {
+  .ratio-visual {
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .ratio-colon {
+    display: none;          /* hide colons when stacked */
+  }
+
+  .ratio-num {
+    font-size: 1.5rem;
+  }
+}
+
+/* ── Param grid: single column on small phones ── */
+@media (max-width: 380px) {
+  .param-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Inputs: prevent iOS zoom (font-size ≥ 16px) ── */
+input[type="number"],
+input[type="text"],
+select {
+  font-size: 1rem !important;   /* ≥16px stops iOS auto-zoom */
+}
+
+/* ── Logo: tighter on very small screens ── */
+@media (max-width: 360px) {
+  .logo {
+    font-size: 2.2rem;
+  }
+  .tagline {
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+  }
+}
+
+/* ── Grind chips: wrap cleanly ── */
+.grind-guide {
+  gap: 5px;
+}
+.grind-chip {
+  font-size: 0.6rem;
+  padding: 4px 8px;
+}
+
+/* ── Pour steps: prevent overflow ── */
+.step-name,
+.step-detail {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.pour-step {
+  flex-wrap: wrap;           /* let content wrap on tiny screens */
+}
+
+@media (max-width: 360px) {
+  .step-time {
+    width: 100%;
+    text-align: left;
+    margin-top: 4px;
+  }
+}
+
+/* ── Timer clock: scale down further if needed ── */
+@media (max-width: 360px) {
+  .timer-clock {
+    font-size: 3rem;
+  }
+}
+
+/* ── Button rows: stack on very small screens ── */
+@media (max-width: 320px) {
+  .btn-row {
+    flex-direction: column;
+  }
+}
+
+/* ── Cards: tighter padding on mobile ── */
+@media (max-width: 400px) {
+  .card {
+    padding: 18px 14px;
+  }
+  main {
+    padding: 0 12px;
+  }
+}
+
+/* ── Recipe banner text overflow ── */
+.recipe-banner {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ── Current-pour banner: handle narrow layouts ── */
+.current-pour-banner {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 360px) {
+  .cpb-action { font-size: 0.9rem; }
+  .cpb-sub    { font-size: 0.65rem; }
+}
